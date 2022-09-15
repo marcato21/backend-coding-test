@@ -7,9 +7,16 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
 module.exports = (db) => {
-    app.get('/health', (req, res) => res.send('Healthy'));
+    app.get('/health', (req, res) => {
+        // #swagger.tags = ['Health']
+        // #swagger.description = 'Check Health.'
+        res.send('Healthy')
+
+    });
 
     app.post('/rides', jsonParser, (req, res) => {
+        // #swagger.tags = ['Rides']
+        // #swagger.description = 'Create new Rides data.'
         const startLatitude = Number(req.body.start_lat);
         const startLongitude = Number(req.body.start_long);
         const endLatitude = Number(req.body.end_lat);
@@ -77,6 +84,8 @@ module.exports = (db) => {
     });
 
     app.get('/rides', (req, res) => {
+        // #swagger.tags = ['Rides']
+        // #swagger.description = 'Get All Rides data.'
         db.all('SELECT * FROM Rides', function (err, rows) {
             if (err) {
                 return res.send({
@@ -97,6 +106,8 @@ module.exports = (db) => {
     });
 
     app.get('/rides/:id', (req, res) => {
+        // #swagger.tags = ['Rides']
+        // #swagger.description = 'Get Rides data using id as reference'
         db.all(`SELECT * FROM Rides WHERE rideID='${req.params.id}'`, function (err, rows) {
             if (err) {
                 return res.send({
