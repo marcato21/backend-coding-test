@@ -31,6 +31,10 @@ Please deliver documentation of the server that clearly explains the goals of th
 1. A pull request against `master` of your fork with a clear description of the change and purpose and merge it
 3. **[BONUS]** Create an easy way to deploy and view the documentation in a web format and include instructions to do so
 
+#### Generate Documentation
+1. Run this command to generate the project documentation `npm run generate` and then `npm start`. Or you can run both command `npm run generate && npm start`.
+2. Open this link using your browser to view the documentation [Documentation](http://localhost:8010/doc)
+
 ### Implement Tooling
 
 Please implement the following tooling:

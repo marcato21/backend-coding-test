@@ -1,0 +1,124 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Xendit Conding Exercise",
+    "description": "The goal of these exercises are to assess your proficiency in software engineering that is related to the daily work that we do at Xendit."
+  },
+  "host": "localhost:8010",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Check Health"
+    },
+    {
+      "name": "Rides",
+      "description": "Get Rides data & Create new Rides data"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "description": "Check Health.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rides": {
+      "post": {
+        "tags": [
+          "Rides"
+        ],
+        "description": "Create new Rides data.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "start_lat": {
+                  "example": "any"
+                },
+                "start_long": {
+                  "example": "any"
+                },
+                "end_lat": {
+                  "example": "any"
+                },
+                "end_long": {
+                  "example": "any"
+                },
+                "rider_name": {
+                  "example": "any"
+                },
+                "driver_name": {
+                  "example": "any"
+                },
+                "driver_vehicle": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Rides"
+        ],
+        "description": "Get All Rides data.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rides/{id}": {
+      "get": {
+        "tags": [
+          "Rides"
+        ],
+        "description": "Get Rides data using id as reference",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}
