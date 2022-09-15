@@ -1,5 +1,5 @@
 const swaggerAutogen = require('swagger-autogen')()
-
+const logger = require('../logger/logger')
 const output = './docs/swagger_out.json'
 const endpoints = ['./src/app.js']
 
@@ -27,3 +27,4 @@ const doc = {
 }
 
 swaggerAutogen(output, endpoints, doc)
+logger.info('Documentation generated succesfully')
