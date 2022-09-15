@@ -3,6 +3,7 @@
 const express = require('express');
 const app = express();
 const port = 8010;
+const logger = require('./logger/logger')
 
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
@@ -20,10 +21,14 @@ db.serialize(() => {
 
     const app = require('./src/app')(db);
 
-    app.listen(port, () => console.log(`App started and listening on port ${port}`));
+    app.listen(port, () => {
+        logger.info(`Server started and running on port ${port}`)
+    });
 
     app.use('/doc', swaggerUi.serve)
-    app.get('/doc', swaggerUi.setup(swaggerFile))
+    app.get('/doc', swaggerUi.setup(swaggerFile), () => {
+        logger.info('Accessing endpoint GET /doc')
+    })
     require('./src/app')(app)
 
 });
