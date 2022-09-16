@@ -123,7 +123,23 @@ module.exports = (db) => {
         // #swagger.tags = ['Rides']
         // #swagger.description = 'Get All Rides data.'
         logger.info('Accessing endpoint GET /rides')
-        db.all('SELECT * FROM Rides', function (err, rows) {
+        let {page} = req.query
+        const {limit} = req.query
+
+        let queryBuilder = 'SELECT * FROM Rides'
+        
+        if (limit >= 1) {
+            queryBuilder = queryBuilder.concat(` LIMIT ${limit} `)
+        }
+
+        if (page >= 1) {
+            page = (page - 1) * limit
+            queryBuilder = queryBuilder.concat(` OFFSET ${page} `)
+        }
+
+        logger.info(queryBuilder)
+
+        db.all(queryBuilder, function (err, rows) {
             if (err) {
                 logger.error(JSON.stringify({
                     error_code: 'SERVER_ERROR',
