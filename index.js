@@ -1,12 +1,12 @@
 'use strict';
 
-const express = require('express');
-const app = express();
+// Const express = require('express');
+// Const app = express();
 const port = 8010;
 const logger = require('./logger/logger')
 
-const bodyParser = require('body-parser');
-const jsonParser = bodyParser.json();
+// Const bodyParser = require('body-parser');
+// Const jsonParser = bodyParser.json();
 
 const swaggerUi = require('swagger-ui-express')
 const swaggerFile = require('./docs/swagger_out.json')

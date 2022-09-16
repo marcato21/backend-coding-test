@@ -200,6 +200,23 @@ describe('API tests', () => {
                     done();
                 });
         });
+
+        it('should return list of rides data with pagination', (done) => {
+            request(app)
+                .get('/rides')
+                .query({
+                    page: 1,
+                    limit: 10
+                })
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        return done(err)
+                    }
+                    done();
+                });
+        });
         
     });
 
