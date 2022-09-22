@@ -120,56 +120,59 @@ module.exports = (db) => {
         });
     });
 
-    app.get('/rides', async (req, res, next) => {
+    app.get('/rides', async (req, res) => {
         // #swagger.tags = ['Rides']
         // #swagger.description = 'Get All Rides data.'
         logger.info('Accessing endpoint GET /rides')
 
-        let {page} = req.query
-        const {limit} = req.query
-
-        let queryBuilder = 'SELECT * FROM Rides'
-        
-        if (limit >= 1) {
-            queryBuilder = queryBuilder.concat(` LIMIT ${limit} `) 
-        }
-
-        if (page >= 1) {
-            page = (page - 1) * limit
-            queryBuilder = queryBuilder.concat(` OFFSET ${page} `)
-        }
-
-        logger.info(queryBuilder)
-
-        await db.all(queryBuilder, async function (err, rows) {
-            if (err) {
-                logger.error(JSON.stringify({
-                    error_code: 'SERVER_ERROR',
-                    message: 'Unknown error'
-                }))
-                return res.send({
-                    error_code: 'SERVER_ERROR',
-                    message: 'Unknown error'
-                });
+        try {
+            let {page} = req.query
+            const {limit} = req.query
+    
+            let queryBuilder = 'SELECT * FROM Rides'
+            
+            if (limit >= 1) {
+                queryBuilder = queryBuilder.concat(` LIMIT ${limit} `) 
             }
-
-            if (rows.length === 0) {
-                logger.error(JSON.stringify({
-                    error_code: 'RIDES_NOT_FOUND_ERROR',
-                    message: 'Could not find any rides'
-                }))
-                return res.send({
-                    error_code: 'RIDES_NOT_FOUND_ERROR',
-                    message: 'Could not find any rides'
-                });
+    
+            if (page >= 1) {
+                page = (page - 1) * limit
+                queryBuilder = queryBuilder.concat(` OFFSET ${page} `)
             }
-
-            logger.info('Rides successfully retrieved.')
-            logger.info(`Response Body: ${JSON.stringify(rows)}`)
-
-            res.send(await rows);
-        })
-            .catch(next)
+    
+            logger.info(queryBuilder)
+    
+            await db.all(queryBuilder, async function (err, rows) {
+                if (err) {
+                    logger.error(JSON.stringify({
+                        error_code: 'SERVER_ERROR',
+                        message: 'Unknown error'
+                    }))
+                    return res.send({
+                        error_code: 'SERVER_ERROR',
+                        message: 'Unknown error'
+                    });
+                }
+    
+                if (rows.length === 0) {
+                    logger.error(JSON.stringify({
+                        error_code: 'RIDES_NOT_FOUND_ERROR',
+                        message: 'Could not find any rides'
+                    }))
+                    return res.send({
+                        error_code: 'RIDES_NOT_FOUND_ERROR',
+                        message: 'Could not find any rides'
+                    });
+                }
+    
+                logger.info('Rides successfully retrieved.')
+                logger.info(`Response Body: ${JSON.stringify(rows)}`)
+    
+                res.send(await rows);
+            }); 
+        } catch (err) {
+            res.send(err)
+        }
     });
 
     app.get('/rides/:id', async (req, res) => {
