@@ -8,15 +8,16 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
 module.exports = (db) => {
-    app.get('/health', (req, res) => {
+    app.get('/health', async (req, res, next) => {
         // #swagger.tags = ['Health']
         // #swagger.description = 'Check Health.'
         logger.info('Accessing endpoint GET /health')
         logger.info('Response: \'Healthy\'')
-        res.send('Healthy')
+
+        res.send(await 'Healthy').catch(next)
     });
 
-    app.post('/rides', jsonParser, (req, res) => {
+    app.post('/rides', jsonParser, async (req, res) => {
         // #swagger.tags = ['Rides']
         // #swagger.description = 'Create new Rides data.'
         logger.info('Accessing endpoint POST /rides')
@@ -85,9 +86,9 @@ module.exports = (db) => {
             });
         }
 
-        var values = [req.body.start_lat, req.body.start_long, req.body.end_lat, req.body.end_long, req.body.rider_name, req.body.driver_name, req.body.driver_vehicle];
+        const values = [req.body.start_lat, req.body.start_long, req.body.end_lat, req.body.end_long, req.body.rider_name, req.body.driver_name, req.body.driver_vehicle];
         
-        db.run('INSERT INTO Rides(startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)', values, function (err) {
+        await db.run('INSERT INTO Rides(startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)', values, async function (err) {
             if (err) {
                 logger.error(JSON.stringify({
                     error_code: 'SERVER_ERROR',
@@ -99,7 +100,7 @@ module.exports = (db) => {
                 });
             }
 
-            db.all('SELECT * FROM Rides WHERE rideID = ?', this.lastID, function (err, rows) {
+            await db.all('SELECT * FROM Rides WHERE rideID = ?', this.lastID, async function (err, rows) {
                 if (err) {
                     logger.error(JSON.stringify({
                         error_code: 'SERVER_ERROR',
@@ -114,22 +115,23 @@ module.exports = (db) => {
                 logger.info('Rides successfully created.')
                 logger.info(`Response Body: ${JSON.stringify(rows)}`)
                 
-                res.send(rows);
+                res.send(await rows);
             });
         });
     });
 
-    app.get('/rides', (req, res) => {
+    app.get('/rides', async (req, res, next) => {
         // #swagger.tags = ['Rides']
         // #swagger.description = 'Get All Rides data.'
         logger.info('Accessing endpoint GET /rides')
+
         let {page} = req.query
         const {limit} = req.query
 
         let queryBuilder = 'SELECT * FROM Rides'
         
         if (limit >= 1) {
-            queryBuilder = queryBuilder.concat(` LIMIT ${limit} `)
+            queryBuilder = queryBuilder.concat(` LIMIT ${limit} `) 
         }
 
         if (page >= 1) {
@@ -139,7 +141,7 @@ module.exports = (db) => {
 
         logger.info(queryBuilder)
 
-        db.all(queryBuilder, function (err, rows) {
+        await db.all(queryBuilder, async function (err, rows) {
             if (err) {
                 logger.error(JSON.stringify({
                     error_code: 'SERVER_ERROR',
@@ -165,15 +167,16 @@ module.exports = (db) => {
             logger.info('Rides successfully retrieved.')
             logger.info(`Response Body: ${JSON.stringify(rows)}`)
 
-            res.send(rows);
-        });
+            res.send(await rows);
+        })
+            .catch(next)
     });
 
-    app.get('/rides/:id', (req, res) => {
+    app.get('/rides/:id', async (req, res) => {
         // #swagger.tags = ['Rides']
         // #swagger.description = 'Get Rides data using id as reference'
         logger.info(`Accessing endpoint GET /rides/${req.params.id}`)
-        db.all(`SELECT * FROM Rides WHERE rideID='${req.params.id}'`, function (err, rows) {
+        await db.all(`SELECT * FROM Rides WHERE rideID='${req.params.id}'`, async function (err, rows) {
             if (err) {
                 logger.error(JSON.stringify({
                     error_code: 'SERVER_ERROR',
@@ -199,7 +202,7 @@ module.exports = (db) => {
             logger.info(`Rides with id: ${req.params.id} successfully retrieved.`)
             logger.info(`Response Body: ${JSON.stringify(rows)}`)
 
-            res.send(rows);
+            res.send(await rows);
         });
     });
 
