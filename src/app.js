@@ -8,13 +8,13 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
 module.exports = (db) => {
-    app.get('/health', async (req, res, next) => {
+    app.get('/health', async (req, res) => {
         // #swagger.tags = ['Health']
         // #swagger.description = 'Check Health.'
         logger.info('Accessing endpoint GET /health')
         logger.info('Response: \'Healthy\'')
 
-        res.send(await 'Healthy').catch(next)
+        res.send(await 'Healthy')
     });
 
     app.post('/rides', jsonParser, async (req, res) => {
@@ -132,17 +132,18 @@ module.exports = (db) => {
             let queryBuilder = 'SELECT * FROM Rides'
             
             if (limit >= 1) {
-                queryBuilder = queryBuilder.concat(` LIMIT ${limit} `) 
+                queryBuilder = queryBuilder.concat(' LIMIT ? ') 
             }
     
             if (page >= 1) {
                 page = (page - 1) * limit
-                queryBuilder = queryBuilder.concat(` OFFSET ${page} `)
+                queryBuilder = queryBuilder.concat(' OFFSET ? ')
             }
-    
             logger.info(queryBuilder)
+
+            const values = [limit, page]
     
-            await db.all(queryBuilder, async function (err, rows) {
+            await db.all(queryBuilder, values, async function (err, rows) {
                 if (err) {
                     logger.error(JSON.stringify({
                         error_code: 'SERVER_ERROR',
@@ -179,7 +180,7 @@ module.exports = (db) => {
         // #swagger.tags = ['Rides']
         // #swagger.description = 'Get Rides data using id as reference'
         logger.info(`Accessing endpoint GET /rides/${req.params.id}`)
-        await db.all(`SELECT * FROM Rides WHERE rideID='${req.params.id}'`, async function (err, rows) {
+        await db.all('SELECT * FROM Rides WHERE rideID = ?', req.params.id, async function (err, rows) {
             if (err) {
                 logger.error(JSON.stringify({
                     error_code: 'SERVER_ERROR',
