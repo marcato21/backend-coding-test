@@ -9,7 +9,8 @@
   "scripts": {
     "test": "nyc mocha tests && eslint . --fix",
     "start": "node index.js",
-    "generate": "node docs/swagger.js"
+    "generate": "node docs/swagger.js",
+    "test:load": "forever start index.js && artillery run ./tests/load-test.yml -o output.json && artillery report -o report.html output.json && forever stop index.js"
   },
   "pre-push": [
     "test"
@@ -29,9 +30,9 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "chai": "^4.3.6",
-    "chai-http": "^4.3.0",
+    "artillery": "^1.7.6",
     "eslint": "^7.32.0",
+    "forever": "^4.0.3",
     "mocha": "^8.0.0",
     "nyc": "^15.1.0",
     "supertest": "^4.0.2"
