@@ -5,6 +5,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Load Test output
+output.json
+report.html
+
 # Runtime data
 pids
 *.pid

@@ -1,0 +1,51 @@
+config:
+  target: "http://localhost:8010"
+  phases:
+    - duration: 30
+      arrivalRate: 100
+      rampTo: 100
+      name: health check
+      
+payload:
+  path: "./tests/rider.csv"
+  fields:
+    - "start_lat"
+    - "start_long"
+    - "end_lat"
+    - "end_long"
+    - "rider_name"
+    - "driver_name"
+    - "driver_vehicle"
+ 
+scenarios:
+  - name: "Health Test"
+    flow:
+      - get:
+          url: "/health"
+  - name: "POST Rides Test"
+    flow:
+      - post:
+          url: "/rides"
+          json: {
+            start_lat: "{{start_lat}}",
+            start_long: "{{start_long}}",
+            end_lat: "{{end_lat}}",
+            end_long: "{{end_long}}",
+            rider_name: "{{rider_name}}",
+            driver_name: "{{driver_name}}",
+            driver_vehicle: "{{driver_vehicle}}"
+          }
+  - name: "Get All Rides Test"
+    flow:
+      - get:
+          url: "/rides"
+          qs:
+            page: 1
+            limit: 10
+          capture:
+            - json: "$.rideID"
+              as: "id"
+  - name: "Get Rides with id Test"
+    flow:
+      - get:
+          url: "/rides/{{ id }}"
